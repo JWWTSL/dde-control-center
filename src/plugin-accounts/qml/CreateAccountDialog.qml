@@ -233,13 +233,22 @@ D.DialogWindow {
                                 implicitHeight: 30
                                 placeholderText: model.placeholder
                                 alertDuration: 3000
-                                // can not past
-                                // validator: RegularExpressionValidator {
-                                //     regularExpression: index ? /^[^:]{0,32}$/ : /[A-Za-z0-9-_]{0,32}$/
-                                // }
+                                property bool _internalTextChange: false
+
+                                function setAlertMessage(msg) {
+                                    if (msg === undefined || msg === null || msg.length === 0) {
+                                        if (showAlert)
+                                            showAlert = false
+                                        alertText = ""
+                                        return
+                                    }
+                                    alertText = msg
+                                    if (!showAlert)
+                                        showAlert = true
+                                }
                                 onTextChanged: {
-                                    if (showAlert)
-                                        showAlert = false
+                                    if (_internalTextChange)
+                                        return
 
                                     if (index === 0) {
                                         var charRegex = /^[A-Za-z0-9-_]*$/
@@ -252,16 +261,19 @@ D.DialogWindow {
                                             var filteredText = text
                                             filteredText = filteredText.replace(/[^A-Za-z0-9-_]/g, "")
                                             filteredText = filteredText.slice(0, 32)
+                                            _internalTextChange = true
                                             text = filteredText
+                                            _internalTextChange = false
                                             
                                             if (isTooLong) {
-                                                alertText = qsTr("Username cannot exceed 32 characters")
-                                                showAlert = true
+                                                setAlertMessage(qsTr("Username cannot exceed 32 characters"))
                                             } else if (hasInvalidChars) {
-                                                alertText = qsTr("Username can only contain letters, numbers, - and _")
-                                                showAlert = true
+                                                setAlertMessage(qsTr("Username can only contain letters, numbers, - and _"))
                                             }
+                                            pwdLayout.currentName = text
+                                            return
                                         }
+                                        setAlertMessage("")
                                         pwdLayout.currentName = text
                                     } else {
                                         var colonRegex = /:/
@@ -274,16 +286,18 @@ D.DialogWindow {
                                             var filteredText = text
                                             filteredText = filteredText.replace(":", "")
                                             filteredText = filteredText.slice(0, 32)
+                                            _internalTextChange = true
                                             text = filteredText
+                                            _internalTextChange = false
                                             
                                             if (isTooLong) {
-                                                alertText = qsTr("Full name cannot exceed 32 characters")
-                                                showAlert = true
+                                                setAlertMessage(qsTr("Full name cannot exceed 32 characters"))
                                             } else if (hasColon) {
-                                                alertText = qsTr("Full name cannot contain colons")
-                                                showAlert = true
+                                                setAlertMessage(qsTr("Full name cannot contain colons"))
                                             }
+                                            return
                                         }
+                                        setAlertMessage("")
                                     }
                                 }
                                 Component.onCompleted: {

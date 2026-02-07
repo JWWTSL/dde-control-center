@@ -943,6 +943,13 @@ DccObject {
                     activeFocusOnTab: false
                     KeyNavigation.tab: groupview.addGroupButton
 
+                    Connections {
+                        target: groupview
+                        function onContentYChanged() { if (editLabel && editLabel.showAlert) editLabel.scheduleAlertRefresh(80) }
+                        function onWidthChanged() { if (editLabel && editLabel.showAlert) editLabel.scheduleAlertRefresh(80) }
+                        function onHeightChanged() { if (editLabel && editLabel.showAlert) editLabel.scheduleAlertRefresh(80) }
+                    }
+
                     Keys.onPressed: function(event) {
                         if (!model.groupEnabled) {
                             if (event.key === Qt.Key_Up) {
