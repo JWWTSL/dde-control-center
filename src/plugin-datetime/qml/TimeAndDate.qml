@@ -232,8 +232,7 @@ DccObject {
                     implicitWidth: 200
                     text: dateAndTimeSettings.customAddr
                     placeholderText: qsTr("Required")
-                    alertText: qsTr("The ntp server address cannot be empty")
-                    alertDuration: 3000
+                    showAlert: false
                     horizontalAlignment: background.visible ? TextInput.AlignLeft : TextInput.AlignRight
                     anchors{
                         rightMargin: 5
@@ -247,13 +246,22 @@ DccObject {
                         addr.focus = !addr.readOnly
                     }
                     onTextChanged: {
-                        if (addr.showAlert && addr.text.length > 0) {
+                        if (addr.text.length > 0) {
                             addr.showAlert = false
                         }
                     }
                     Component.onCompleted: {
                         Qt.callLater( function(){ addr.forceActiveFocus() } )
                         addr.readOnly = text.length > 0
+                    }
+
+                    D.AlertToolTip {
+                        id: addrErrorTip
+                        target: addr
+                        text: qsTr("The ntp server address cannot be empty")
+                        visible: addr.showAlert
+                        timeout: 3000
+                        y: -height - DS.Style.control.spacing
                     }
                 }
                 D.IconButton {
@@ -285,6 +293,7 @@ DccObject {
                     }
                     onClicked: {
                         if (addr.text.length === 0) {
+                            addr.showAlert = false
                             addr.showAlert = true
                             return
                         }
