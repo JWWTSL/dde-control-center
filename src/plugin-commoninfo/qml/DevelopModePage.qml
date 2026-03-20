@@ -168,7 +168,8 @@ DccObject {
                                         return
                                     }
                                     developDlg.currentStackIndex = 0;
-                                    stackView.replace(page1Component);
+                                    // 使用 StackView.Immediate 避免动画期间的GC问题
+                                    stackView.replace(page1Component, StackView.Immediate);
                                 }
                             }
 
@@ -182,7 +183,8 @@ DccObject {
                                     }
 
                                     developDlg.currentStackIndex = 1;
-                                    stackView.replace(page2Component);
+                                    // 使用 StackView.Immediate 避免动画期间的GC问题
+                                    stackView.replace(page2Component, StackView.Immediate);
                                 }
                             }
                         }

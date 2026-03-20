@@ -17,6 +17,10 @@ Loader {
     onDccObjChanged: updateDccObjItem()
     onDccObjItemChanged: updateDccObjItem()
     Component.onCompleted: updateDccObjItem()
+    // 在组件销毁时清理引用，防止GC访问悬空指针
+    Component.onDestruction: {
+        sourceComponent = null
+    }
     onStatusChanged: {
         if (status === Loader.Error) {
             console.warn("Failed to load component for dccObj:", dccObj)
